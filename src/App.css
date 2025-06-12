@@ -1,3 +1,362 @@
+body {
+  font-family: Arial, sans-serif;
+  background: rgba(0, 0, 0, 0.874);
+  color: #fff;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100vw;
+  overflow-x: hidden;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  min-height: 100vh; /* Ensure main takes at least full viewport height */
+}
+
+.content-container {
+  display: flex;
+  flex-direction: row;
+  margin-top: 60px; /* Adjust based on header height */
+  margin-bottom: 60px; /* Adjust based on footer height */
+  min-height: calc(100vh - 120px); /* Account for header and footer */
+}
+
+/* Sidebar.css */
+.sidebar {
+  flex: 0 0 250px; /* Fixed width on larger screens */
+  background-color: #1e2a3a; /* Deep slate blue */
+  color: #e0e0e0; /* Light gray text */
+  position: fixed; /* Keep sidebar fixed */
+  top: 56px; /* Start below header */
+  bottom: 60px; /* End above footer */
+  height: calc(100vh - 120px); /* Fit between header and footer */
+  z-index: 900; /* Below header/footer but above content */
+  border: none; /* Remove any borders */
+  transition: transform 0.3s ease; /* Smooth transition for mobile toggle */
+  display: flex;
+  flex-direction: column;
+  width: auto; /* Allow width to adjust based on content */
+  min-width: 200px; /* Set a minimum width */
+  max-width: 300px; /* Set a maximum width */
+  left: 0;
+  transition: transform 0.3s ease;
+  transform: translateX(-250px); /* Hide by default */
+}
+
+.sidebar.active {
+  transform: translateX(0); /* Show sidebar when toggled */
+}
+
+.sidebar-toggle {
+  position: fixed; /* Always visible on the screen */
+  top: 66px; /* Below the header (56px header height + 10px gap) */
+  left: 10px;
+  z-index: 901; /* Above sidebar but below header */
+  background-color: #4e73df;
+  color: #ffffff;
+  border: none;
+  padding: 10px 15px;
+  font-size: 1.2em;
+  cursor: pointer;
+  border-radius: 5px;
+  margin: 10px;
+  align-self: flex-start;
+  display: flex; /* Ensure the icon is centered within the button */
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-content-button {
+  margin-top: 70px;
+}
+
+.sidebar-toggle:hover {
+  background-color: #2e59a8;
+}
+
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  flex-grow: 1; /* Ensure the list takes up remaining space */
+}
+
+.sidebar li {
+  padding: 15px;
+  text-align: center;
+  /* cursor: pointer; */
+  border-bottom: 1px solid #2a3b4c; /* Slightly darker border */ /* Subtle separation between items */
+}
+
+.sidebar li:hover,
+.sidebar li.active {
+  background-color: #2a3b4c; /* Subtle hover effect */
+}
+
+.sidebar button {
+  background-color: #4e73df; /* Soft blue */
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  /* width: 100%; */
+  /* text-align: center; */
+  /* padding: 15px; */
+  /* font-size: inherit; */
+}
+.sidebar button:hover {
+  background-color: #2e59a8; /* Darker blue on hover */
+}
+
+.sidebar button span {
+  margin-left: 5px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .sidebar {
+    flex: 0 0 200px;
+    transform: translateX(-200px);
+  }
+  .sidebar.active {
+    transform: translateX(0);
+  }
+  .content {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    flex: 0 0 150px;
+    transform: translateX(-150px);
+  }
+  .sidebar.active {
+    transform: translateX(0);
+  }
+  .content {
+    margin-left: 0;
+  }
+  .content.sidebar-open {
+    margin-left: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    flex: 0 0 100%;
+    width: 100%;
+    transform: translateX(-100%);
+    top: 60px;
+    bottom: 0;
+    height: calc(100vh - 60px);
+  }
+  .sidebar.active {
+    transform: translateX(0);
+  }
+  .content {
+    margin-left: 0;
+  }
+  .content.sidebar-open {
+    margin-left: 0;
+  }
+}
+
+/* Ensure content adjusts when sidebar is hidden/shown */
+.content {
+  transition: margin-left 0.3s ease; /* Smooth transition for content shift */
+}
+/* Sidebar css end */
+
+.table-container {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  margin: 20px auto;
+}
+
+.table-column {
+  width: 60%;
+  border-collapse: collapse;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  background: rgba(0, 0, 0, 0.3); /* Matching the background */
+  color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.table-title {
+  caption-side: top; /* Positions the caption above the table */
+  font-size: 1.6em;
+  font-weight: bold;
+  color: #2c3e50;
+  text-align: center;
+  padding: 10px;
+  background-color: #ecf0f1;
+  border-radius: 0px;
+}
+
+.table th,
+.table td {
+  border: 1px solid #ddd;
+  padding: 12px 16px;
+  text-align: left;
+  vertical-align: top;
+  text-align: center;
+  list-style-position: inside;
+  text-align: center;
+  padding-left: 0;
+}
+
+.table thead {
+  background-color: rgba(255, 255, 255, 0.1); /* Soft contrast for header */
+}
+
+.table th {
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.table tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.05); /* Light stripe for rows */
+}
+
+.table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* Hover effect */
+}
+
+.table ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.table li {
+  list-style-type: disc;
+  margin-bottom: 4px;
+}
+
+/* .fetch-all-developers-button,
+.fetch-all-team-leaders-button {
+  display: inline-block;
+  padding: "10px 15px";
+  background-color: #4CAF50;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  border: "none";
+  border-radius: "0px 100px 100px 0px";
+  cursor: "pointer";
+  transition: "background-color 0.3s ease";
+}
+
+.fetch-all-developers-button,.fetch-all-team-leaders-button:buttonHoverStyles {
+  background-color: "#45a049", 
+}; */
+
+.fetch-all-developers-button,
+.fetch-all-team-leaders-button {
+  padding: 8px 16px;
+  margin: 4px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.fetch-all-developers-button,
+.fetch-all-team-leaders-button {
+  background-color: #008cba;
+  color: white;
+}
+
+.fetch-all-developers-button:hover,
+.fetch-all-team-leaders-button:hover {
+  opacity: 0.8;
+}
+
+.header {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  position: fixed; /* Stick to top */
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000; /* Ensure header is above other elements */
+  flex-shrink: 0;
+}
+
+.content {
+  flex: 1;
+  margin-left: 0; /* Offset for sidebar width */
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.874); /* Match the body background */
+  border-radius: 10px;
+  text-align: center;
+  overflow-y: auto; /* Allow content to scroll */
+  min-height: calc(100vh - 120px); /* Ensure content fills available space */
+  -webkit-overflow-scrolling: touch;
+  border: none; /* Remove debugging border */
+  transition: margin-left 0.3s ease;
+}
+
+.content::-webkit-scrollbar {
+  display: none; /* Hide scrollbar in Chrome/Safari */
+}
+
+.footer {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  position: fixed; /* Stick to bottom */
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000; /* Ensure footer is above other elements */
+  flex-shrink: 0;
+  font-size: 0.875rem;
+}
+
+.add-todo-container {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2rem;
+  border-radius: 10px;
+  margin-top: 50px;
+  text-align: center;
+  display: inline-block;
+}
+
+input {
+  padding: 10px;
+  width: 200px;
+  border: none;
+  border-radius: 60px;
+}
+
+.result-box {
+  margin-top: 20px;
+  font-size: 1.2rem;
+}
+
+input[type="checkbox"] {
+  transform: scale(1.5);
+  margin-right: 20px;
+  width: 30px;
+}
+
+.completed {
+  text-decoration: line-through;
+  color: #888;
+}
+
 .App {
   text-align: center;
 }
@@ -22,6 +381,8 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  position: sticky;
+  top: 0;
 }
 
 .App-link {
@@ -35,4 +396,77 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.about-container {
+  min-height: 40vh;
+  margin: 40px auto;
+  padding: 30px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2rem;
+  border-radius: 100px;
+  margin-top: 50px;
+  display: inline-block;
+  color: #fff;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: row;
+}
+
+.todos-container {
+  width: 80%;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.todo-box {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin: 10px 0;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.todo-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.todo-box.completed {
+  background-color: rgba(255, 255, 255, 0.2);
+  text-decoration: line-through;
+  color: #888;
+}
+
+.todo-box .todo-text {
+  font-size: 1.2em;
+  color: #fff;
+}
+
+.todo-box .todo-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.todo-box .todo-actions button {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1.1em;
+  transition: color 0.2s ease;
+}
+
+.todo-box .todo-actions button:hover {
+  color: #f39c12;
+}
+
+.todo-box .todo-actions .delete-btn:hover {
+  color: #e74c3c;
 }
