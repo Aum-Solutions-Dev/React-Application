@@ -1,20 +1,33 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 const TeamLeader = () => {
-  const [data, setData] = useState([]);
+  const [teamLeaders, setTeamLeaders] = useState([]);
+  const [teamLeaderError, setTeamLeaderError] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:8080/apiLead/get-team-leaders"
+        const token = localStorage.getItem("authToken");
+
+        const response = await axios.get("http://localhost:8080/apiLead/get-team-leaders",
+         {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Set the Authorization header
+          },
+        }
         );
-        const result = await response.json();
-        setData(result);
-      } catch (error) {
-        console.error("Error fetching data:", error);
+        setTeamLeaders(response.data);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setTeamLeaderError(
+          err.response?.data?.message ||
+            err.message ||
+            "Failed to fetch developers"
+        );
       }
     };
 
@@ -32,7 +45,7 @@ const TeamLeader = () => {
             </tr> */}
           </thead>
           <tbody>
-            {data.map((teamLeader) => (
+            {teamLeaders.map((teamLeader) => (
               <tr key={teamLeader.teamLeadId}>
                 <td>{teamLeader.name}</td>
               </tr>

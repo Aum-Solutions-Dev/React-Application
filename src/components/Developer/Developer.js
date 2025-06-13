@@ -1,23 +1,35 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const Developer = () => {
   const [data, setData] = useState([]);
-
+  const [error, setError] = useState("");
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:8080/apiDev/get-developers"
+        const token = localStorage.getItem("authToken");
+
+        const response = await axios.get("http://localhost:8080/apiDev/get-developers",
+         {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Set the Authorization header
+          },
+        }
         );
-        const result = await response.json();
-        setData(result);
-      } catch (error) {
-        console.error("Error fetching data:", error);
+        setData(response.data);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setError(
+          err.response?.data?.message ||
+            err.message ||
+            "Failed to fetch developers"
+        );
       }
     };
-
     fetchData();
   }, []);
 

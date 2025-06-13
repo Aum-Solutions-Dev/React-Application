@@ -273,7 +273,7 @@ body {
 
 .fetch-all-developers-button,
 .fetch-all-team-leaders-button {
-  background-color: #008cba;
+  background-color: #4e73df; /* Match .sidebar button */
   color: white;
 }
 
@@ -292,6 +292,19 @@ body {
   width: 100%;
   z-index: 1000; /* Ensure header is above other elements */
   flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 10px;
+  }
+  .header h1 {
+    font-size: 1.2em;
+  }
+  .logout-btn {
+    padding: 6px 12px;
+    font-size: 0.9em;
+  }
 }
 
 .content {
@@ -469,4 +482,105 @@ input[type="checkbox"] {
 
 .todo-box .todo-actions .delete-btn:hover {
   color: #e74c3c;
+}
+
+
+/** Login Css */
+
+.login-container {
+  max-width: 400px;
+  margin: 100px auto;
+  padding: 2rem;
+  background: white; /* Match .todos-container */
+  border-radius: 10px; /* Match .todos-container */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Match .todos-container */
+  text-align: center;
+  color: black;
+}
+
+.login-container h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.8em;
+  font-weight: bold;
+  color: black; /* Match .sidebar text */
+}
+
+.login-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem; /* Slightly increased for better spacing */
+}
+
+.login-container label {
+  text-align: left;
+  font-size: 1em;
+  color: black;
+  margin-bottom: 0.5rem;
+}
+
+.login-container input {
+  padding: 12px 16px; /* Larger padding for better usability */
+  font-size: 1em;
+  border: none;
+  border-radius: 30px; /* Slightly less rounded than 60px for balance */
+  background: rgba(255, 255, 255, 0.15); /* Slightly lighter than .todo-box */
+  color:black;
+  width: 100%; /* Full width within container */
+  box-sizing: border-box; /* Ensure padding doesn’t affect width */
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-container input::placeholder {
+  color:black; /* Subtle placeholder color */
+  opacity: 1; /* Ensure placeholder is visible */
+}
+
+.login-container input:focus {
+  outline: none;
+  background: #d6e0ff; /* Brighter on focus */
+  box-shadow: 0 0 8px rgba(78, 115, 223, 0.5); /* Blue glow to match .sidebar button */
+}
+
+.login-container input:hover:not(:focus) {
+  background: rgba(255, 255, 255, 0.2); /* Subtle hover effect */
+}
+
+.login-container button {
+  padding: 12px;
+  background-color: #4e73df; /* Match .sidebar button */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.login-container button:hover {
+  background-color: #2e59a8; /* Match .sidebar button:hover */
+}
+
+.error {
+  color: #e74c3c; /* Match .logout-btn */
+  margin: 1rem 0;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+/** Logout Button Style */
+
+
+.logout-btn {
+  background-color: #e74c3c; /* Red to indicate logout action */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  font-size: 1em;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.logout-btn:hover {
+  background-color: #c0392b; /* Darker red on hover */
 }

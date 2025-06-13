@@ -1,44 +1,68 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Login = ({ onLoginSuccess }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      // Encode the username and password as Base64
-      const credentials = `${username}:${password}`;
+      setError("");
+
+      const credentials = `${username}:${password}`; // Encode username and password as Base64 for Basic Auth
       const encodedCredentials = btoa(credentials); // btoa() encodes the string as base64
 
-      // Set the Authorization header with the Basic <encodedCredentials>
-      const response = await fetch("http://localhost:8080/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Basic ${encodedCredentials}`, // Set the Authorization header
+      const response = await axios.post(
+        "http://localhost:8080/login",
+        {
+          username,
+          password,
         },
-        body: JSON.stringify({ username, password }), // You can still send the username and password as JSON if needed
-      });
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Basic ${encodedCredentials}`, // Set the Authorization header
+          },
+        }
+      );
 
-      if (!response.ok) {
-        throw new Error("Invalid credentials");
-      }
+      console.log("Username:", username);
+      console.log("Password:", password);
+      console.log("Response: ", response);
+      console.log("Response Data:", response.data);
 
-      const jwtToken = await response.json();
-      localStorage.setItem("authToken", jwtToken.token);
+      const token = response.data;
+      console.log("token:", token);
+      localStorage.setItem("authToken", token); // Set authentication token in local storage.
       onLoginSuccess();
+      const from = location.state?.from?.pathname || "/";
+      navigate(from, { replace: true });
     } catch (err) {
-      setError(err.message);
+      console.error("Login error:", err);
+      // Handle Axios-specific errors
+      if (err.response) {
+        // Server responded with a status other than 2xx
+        setError(err.response.data?.message || "Invalid username or password");
+      } else if (err.request) {
+        // No response received
+        setError("Server is not responding. Please try again later.");
+      } else {
+        // Other errors (e.g., parsing or setup issues)
+        setError(err.message || "Failed to log in. Please try again.");
+      }
     }
   };
 
   return (
-    <div>
+    <div className="login-container">
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <input
@@ -57,7 +81,7 @@ const Login = ({ onLoginSuccess }) => {
         />
         <button type="submit">Login</button>
       </form>
-      {error && <p>{error}</p>}
+      {error && <p className="error">{error}</p>}
     </div>
   );
 };

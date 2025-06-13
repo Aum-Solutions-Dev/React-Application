@@ -2,52 +2,76 @@ import React from "react";
 import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Table = () => {
-  const [data, setData] = useState([]);
-  const [developer, setDeveloperData] = useState([]);
+  const [teamLeaders, setTeamLeaders] = useState([]);
+  const [developers, setDevelopers] = useState([]);
+  const [developerError, setDeveloperError] = useState("");
+  const [teamLeaderError, setTeamLeaderError] = useState("");
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAllDevelopers = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:8080/apiDev/get-developers"
+        const token = localStorage.getItem("authToken");
+        const response = await axios.get("http://localhost:8080/apiDev/get-developers",
+         {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Set the Authorization header
+          },
+        }
         );
-        const result = await response.json();
-        setDeveloperData(result);
-      } catch (error) {
-        console.error("Error fetching data:", error);
+        setDevelopers(response.data);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setDeveloperError(
+          err.response?.data?.message ||
+            err.message ||
+            "Failed to fetch developers"
+        );
       }
     };
-
+    
     fetchAllDevelopers();
   }, []);
 
   const handleFetchAllDevelopers = () => {
     navigate("/developer");
   };
+  
+  const handleFetchAllTeamLeaders = () => {
+    navigate("/team-leader");
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:8080/apiLead/get-team-leaders"
+        const token = localStorage.getItem("authToken");
+        const response = await axios.get("http://localhost:8080/apiLead/get-team-leaders",
+         {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Set the Authorization header
+          },
+        }
         );
-        const result = await response.json();
-        setData(result);
-      } catch (error) {
-        console.error("Error fetching data:", error);
+        setTeamLeaders(response.data);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setTeamLeaderError(
+          err.response?.data?.message ||
+            err.message ||
+            "Failed to fetch developers"
+        );
       }
     };
 
     fetchData();
   }, []);
 
-  const handleFetchAllTeamLeaders = () => {
-    navigate("/team-leader");
-  };
 
   return (
     <div className="table-container">
@@ -60,7 +84,7 @@ const Table = () => {
             </tr>
           </thead>
           <tbody>
-            {data.map((teamLeader) => (
+            {teamLeaders.map((teamLeader) => (
               <tr key={teamLeader.teamLeadId}>
                 <td>{teamLeader.name}</td>
                 <td>

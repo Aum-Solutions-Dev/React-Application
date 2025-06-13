@@ -7,7 +7,14 @@ import AddTodo from "./components/AddTodo/AddTodo.js";
 import About from "./components/About/About.js";
 import Weather from "./components/Weather/Weather.js";
 import { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+  Navigate,
+  useNavigate
+} from "react-router-dom";
 import Developer from "./components/Developer/Developer.js";
 import Table from "./components/Table/Table.js";
 import TeamLeader from "./components/TeamLeader/TeamLeader.js";
@@ -15,6 +22,15 @@ import Sidebar from "./components/Sidebar/Sidebar.js";
 import Joke from "./components/Joke/Joke.js";
 import CovidData from "./components/CovidData/CovidData.js";
 import Login from "./components/Login/Login.js";
+
+function ProtectedRoute({ isAuthenticated, children }) {
+  const location = useLocation();
+  return isAuthenticated ? (
+    children
+  ) : (
+    <Navigate to="/login" state={{ from: location }} />
+  );
+}
 
 function App() {
   /**
@@ -31,9 +47,6 @@ function App() {
     }
   }, []);
 
-  if (!isAuthenticated) {
-    setIsAuthenticated(true);
-  }
   /**
    * On app start, it checks localStorage for saved todos.
    * If found, it parses and loads them into state.
@@ -64,7 +77,7 @@ function App() {
       todoId: todoId,
       title: title,
       desc: desc,
-      sCompleted: false,
+      isCompleted: false,
     };
     setTodos([...todos, myTodo]);
   };
@@ -111,56 +124,85 @@ function App() {
     <>
       <div className="wrapper">
         <Router>
-          <div className="main">
-            <div className="header">
-              <Header title={"SkyTasks"} />
-            </div>
-            <div className="content-container">
-              <Sidebar />
-              <div className="content">
-                <Routes>
-                  <Route
-                    path="/login"
-                    element={
-                      <Login onLoginSuccess={() => setIsAuthenticated(true)} />
-                    }
-                  />
-                  <Route
-                    path="/todo"
-                    element={
-                      <>
-                        <AddTodo addTodo={addTodo} />
-                        <Todos
-                          todos={todos}
-                          setTodos={setTodos}
-                          onDelete={onDelete}
-                        />
-                      </>
-                    }
-                  />
-                  <Route
-                    exact
-                    path="/"
-                    element={
-                      <>
-                        <Home />
-                        <Table />
-                      </>
-                    }
-                  />
-                  <Route exact path="/joke" element={<Joke />} />
-                  <Route exact path="/covid-data" element={<CovidData />} />
-                  <Route exact path="/weather" element={<Weather />} />
-                  <Route exact path="/about" element={<About />} />
-                  <Route exact path="/team-leader" element={<TeamLeader />} />
-                  <Route exact path="/developer" element={<Developer />} />
-                </Routes>
-              </div>
-            </div>
-            <div className="footer">
-              <Footer />
-            </div>
-          </div>
+          <Routes>
+            <Route
+              path="/login"
+              element={
+                <Login onLoginSuccess={() => setIsAuthenticated(true)} />
+              }
+            />
+            <Route
+              path="*"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
+                  <div className="main">
+                    <div className="header">
+                      <Header title={"SkyTasks"} onLogout={() => setIsAuthenticated(false)}/>
+                    </div>
+                    <div className="content-container">
+                      <Sidebar />
+                      <div className="content">
+                        <Routes>
+                          <Route
+                            path="/login"
+                            element={
+                              <Login
+                                onLoginSuccess={() => setIsAuthenticated(true)}
+                              />
+                            }
+                          />
+                          <Route
+                            path="/todo"
+                            element={
+                              <>
+                                <AddTodo addTodo={addTodo} />
+                                <Todos
+                                  todos={todos}
+                                  setTodos={setTodos}
+                                  onDelete={onDelete}
+                                />
+                              </>
+                            }
+                          />
+                          <Route
+                            exact
+                            path="/"
+                            element={
+                              <>
+                                <Home />
+                                <Table />
+                              </>
+                            }
+                          />
+                          <Route exact path="/joke" element={<Joke />} />
+                          <Route
+                            exact
+                            path="/covid-data"
+                            element={<CovidData />}
+                          />
+                          <Route exact path="/weather" element={<Weather />} />
+                          <Route exact path="/about" element={<About />} />
+                          <Route
+                            exact
+                            path="/team-leader"
+                            element={<TeamLeader />}
+                          />
+                          <Route
+                            exact
+                            path="/developer"
+                            element={<Developer />}
+                          />
+                        </Routes>
+                      </div>
+                    </div>
+                    <div className="footer">
+                      <Footer />
+                    </div>
+                  </div>
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
         </Router>
       </div>
     </>
