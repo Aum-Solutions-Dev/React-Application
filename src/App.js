@@ -25,7 +25,10 @@ import Login from "./components/Login/Login.js";
 
 function ProtectedRoute({ isAuthenticated, children }) {
   const location = useLocation();
-  return isAuthenticated ? (
+  const token = localStorage.getItem("authToken");
+  const isAuth = isAuthenticated || !!token;
+  console.log("ProtectedRoute - isAuthenticated:", isAuthenticated, "token:", token, "isAuth:", isAuth);
+  return isAuth ? (
     children
   ) : (
     <Navigate to="/login" state={{ from: location }} />
@@ -128,7 +131,13 @@ function App() {
             <Route
               path="/login"
               element={
-                <Login onLoginSuccess={() => setIsAuthenticated(true)} />
+                <Login onLoginSuccess={() => setIsAuthenticated(true)} mode="login"/>
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                <Login onLoginSuccess={() => setIsAuthenticated(true)} mode="sign up"/>
               }
             />
             <Route

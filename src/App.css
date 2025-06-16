@@ -567,6 +567,21 @@ input[type="checkbox"] {
   font-weight: bold;
 }
 
+.auth-link {
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.auth-link a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.auth-link a:hover {
+  text-decoration: underline;
+}
+
 /** Logout Button Style */
 
 

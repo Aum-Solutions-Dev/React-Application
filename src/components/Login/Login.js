@@ -1,69 +1,103 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const Login = ({ onLoginSuccess }) => {
+const Login = ({ onLoginSuccess, mode }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Reset fields when mode changes or after navigation to /login from signup
+  useEffect(() => {
+    setUsername("");
+    setPassword("");
+    setError(""); // Optionally clear error as well
+  }, [mode, location.pathname]); // Trigger on mode or pathname change
+
+  const isLoginMode = mode === "login";
+  const title = isLoginMode ? "Login" : "Sign up";
+  const buttonText = isLoginMode ? "Login" : "Sign up";
+  const endpoint = isLoginMode
+    ? "http://localhost:8080/login"
+    : "http://localhost:8080/register";
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setError("");
     try {
-      setError("");
+      let response;
+      if (mode === "login") {
+        const credentials = `${username}:${password}`; // Encode username and password as Base64 for Basic Auth
+        const encodedCredentials = btoa(credentials); // btoa() encodes the string as base64
+        console.log(credentials);
+        console.log(encodedCredentials);
+        console.log(endpoint);
 
-      const credentials = `${username}:${password}`; // Encode username and password as Base64 for Basic Auth
-      const encodedCredentials = btoa(credentials); // btoa() encodes the string as base64
-
-      const response = await axios.post(
-        "http://localhost:8080/login",
-        {
-          username,
-          password,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Basic ${encodedCredentials}`, // Set the Authorization header
+        const response = await axios.post(
+          endpoint,
+          {
+            username,
+            password,
           },
-        }
-      );
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Basic ${encodedCredentials}`, // Set the Authorization header
+            },
+          }
+        );
+        console.log("Response: ", response);
 
+        const token = response.data;
+        console.log("token:", token);
+        localStorage.setItem("authToken", token); // Set authentication token in local storage.
+        onLoginSuccess();
+        const from = location.state?.from?.pathname || "/";
+        navigate(from, { replace: true });
+      } else {
+        // For signup: send only JSON body, no Basic Authentication
+        response = await axios.post(
+          endpoint,
+          { username, password },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        // Redirect to login on success
+        console.log("Signup successful, redirecting to login");
+        navigate("/login", { replace: true });
+      }
       console.log("Username:", username);
       console.log("Password:", password);
       console.log("Response: ", response);
       console.log("Response Data:", response.data);
-
-      const token = response.data;
-      console.log("token:", token);
-      localStorage.setItem("authToken", token); // Set authentication token in local storage.
-      onLoginSuccess();
-      const from = location.state?.from?.pathname || "/";
-      navigate(from, { replace: true });
     } catch (err) {
-      console.error("Login error:", err);
-      // Handle Axios-specific errors
+      console.error(`${isLoginMode ? "Login" : "Sign up"} error:`, err);
       if (err.response) {
-        // Server responded with a status other than 2xx
-        setError(err.response.data?.message || "Invalid username or password");
+        setError(
+          err.response.data?.message ||
+            `Invalid ${isLoginMode ? "login" : "sign up"} credentials`
+        );
       } else if (err.request) {
-        // No response received
         setError("Server is not responding. Please try again later.");
       } else {
-        // Other errors (e.g., parsing or setup issues)
-        setError(err.message || "Failed to log in. Please try again.");
+        setError(
+          err.message ||
+            `Failed to ${isLoginMode ? "log in" : "sign up"}. Please try again.`
+        );
       }
     }
   };
 
   return (
     <div className="login-container">
-      <h2>Login</h2>
+      <h2>{title}</h2>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -79,15 +113,31 @@ const Login = ({ onLoginSuccess }) => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Login</button>
+        <button type="submit">{buttonText}</button>
       </form>
       {error && <p className="error">{error}</p>}
+      <p className="auth-link">
+        {isLoginMode ? (
+          <>
+            Create an account? <Link to="/signup">sign up</Link>
+          </>
+        ) : (
+          <>
+            Already have an account? <Link to="/login">login</Link>
+          </>
+        )}
+      </p>
     </div>
   );
 };
 
-Login.propTypes = {};
+Login.propTypes = {
+  onLoginSuccess: PropTypes.func.isRequired,
+  mode: PropTypes.oneOf(["login", "sign up"]).isRequired,
+};
 
-Login.defaultProps = {};
+Login.defaultProps = {
+  mode: "login",
+};
 
 export default Login;
