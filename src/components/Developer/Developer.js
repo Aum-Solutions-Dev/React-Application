@@ -2,24 +2,20 @@ import React from "react";
 import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import api  from "../../axiosInstance";
 
 const Developer = () => {
   const [data, setData] = useState([]);
   const [error, setError] = useState("");
   
+  const useCustomHookEffect = () => {
+    const [data, setData] = useState([]);
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem("authToken");
-
-        const response = await axios.get("http://localhost:8080/apiDev/get-developers",
-         {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Set the Authorization header
-          },
-        }
-        );
+        const response = await api.get("/apiDev/get-developers");
         setData(response.data);
       } catch (err) {
         console.error("Error fetching data:", err);

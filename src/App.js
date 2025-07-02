@@ -27,11 +27,10 @@ function ProtectedRoute({ isAuthenticated, children }) {
   const location = useLocation();
   const token = localStorage.getItem("authToken");
   const isAuth = isAuthenticated || !!token;
-  console.log("ProtectedRoute - isAuthenticated:", isAuthenticated, "token:", token, "isAuth:", isAuth);
   return isAuth ? (
     children
   ) : (
-    <Navigate to="/login" state={{ from: location }} />
+    <Navigate to="/signin" state={{ from: location }} />
   );
 }
 
@@ -129,9 +128,9 @@ function App() {
         <Router>
           <Routes>
             <Route
-              path="/login"
+              path="/signin"
               element={
-                <Login onLoginSuccess={() => setIsAuthenticated(true)} mode="login"/>
+                <Login onLoginSuccess={() => setIsAuthenticated(true)} mode="sign in"/>
               }
             />
             <Route
@@ -153,7 +152,7 @@ function App() {
                       <div className="content">
                         <Routes>
                           <Route
-                            path="/login"
+                            path="/signin"
                             element={
                               <Login
                                 onLoginSuccess={() => setIsAuthenticated(true)}

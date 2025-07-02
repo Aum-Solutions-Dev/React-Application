@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import api  from "../../axiosInstance";
 
 const Table = () => {
   const [teamLeaders, setTeamLeaders] = useState([]);
@@ -15,16 +16,8 @@ const Table = () => {
   useEffect(() => {
     const fetchAllDevelopers = async () => {
       try {
-        const token = localStorage.getItem("authToken");
-        const response = await axios.get("http://localhost:8080/apiDev/get-developers",
-         {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Set the Authorization header
-          },
-        }
-        );
-        setDevelopers(response.data);
+        const response = await api.get("/apiDev/get-developers");
+         setDevelopers(response.data);
       } catch (err) {
         console.error("Error fetching data:", err);
         setDeveloperError(
@@ -49,15 +42,7 @@ const Table = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem("authToken");
-        const response = await axios.get("http://localhost:8080/apiLead/get-team-leaders",
-         {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Set the Authorization header
-          },
-        }
-        );
+        const response = await api.get("/apiLead/get-team-leaders");
         setTeamLeaders(response.data);
       } catch (err) {
         console.error("Error fetching data:", err);

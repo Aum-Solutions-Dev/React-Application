@@ -212,8 +212,9 @@ body {
   vertical-align: top;
   text-align: center;
   list-style-position: inside;
-  text-align: center;
+
   padding-left: 0;
+  vertical-align: middle; /* Center content vertically */
 }
 
 .table thead {
@@ -234,13 +235,17 @@ body {
 }
 
 .table ul {
-  padding-left: 20px;
-  margin: 0;
+  padding: 0; /* Remove default padding to avoid indentation */
+  margin: 0 auto; /* Center the list horizontally */
+  list-style-position: outside; /* Position bullets outside the text */
+  display: inline-block; /* Allow centering with margin: auto */
 }
 
 .table li {
-  list-style-type: disc;
-  margin-bottom: 4px;
+  list-style-type: disc; /* Keep default disc bullets */
+  margin-bottom: 4px; /* Spacing between list items */
+  margin-left: 1.5em; /* Ensure bullets are visible outside the text */
+  text-align: left;
 }
 
 /* .fetch-all-developers-button,

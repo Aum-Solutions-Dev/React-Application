@@ -3,6 +3,8 @@ import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import api  from "../../axiosInstance";
+
 
 const Login = ({ onLoginSuccess, mode }) => {
   const [username, setUsername] = useState("");
@@ -18,26 +20,26 @@ const Login = ({ onLoginSuccess, mode }) => {
     setError(""); // Optionally clear error as well
   }, [mode, location.pathname]); // Trigger on mode or pathname change
 
-  const isLoginMode = mode === "login";
-  const title = isLoginMode ? "Login" : "Sign up";
-  const buttonText = isLoginMode ? "Login" : "Sign up";
+  const isLoginMode = mode === "sign in";
+  const title = isLoginMode ? "Sign in" : "Sign up";
+  const buttonText = isLoginMode ? "Sign in" : "Sign up";
   const endpoint = isLoginMode
-    ? "http://localhost:8080/login"
-    : "http://localhost:8080/register";
+    ? "/login"
+    : "/register";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     try {
       let response;
-      if (mode === "login") {
+      if (mode === "sign in") {
         const credentials = `${username}:${password}`; // Encode username and password as Base64 for Basic Auth
         const encodedCredentials = btoa(credentials); // btoa() encodes the string as base64
         console.log(credentials);
         console.log(encodedCredentials);
         console.log(endpoint);
 
-        const response = await axios.post(
+        const response = await api.post(
           endpoint,
           {
             username,
@@ -52,15 +54,18 @@ const Login = ({ onLoginSuccess, mode }) => {
         );
         console.log("Response: ", response);
 
-        const token = response.data;
+        const token = response.data.accessToken;
         console.log("token:", token);
         localStorage.setItem("authToken", token); // Set authentication token in local storage.
+        const refreshToken = response.data.refreshToken;
+        console.log("refreshToken:", refreshToken);
+        localStorage.setItem("refreshToken", refreshToken); // Set refreshToken token in local storage.
         onLoginSuccess();
         const from = location.state?.from?.pathname || "/";
         navigate(from, { replace: true });
       } else {
         // For signup: send only JSON body, no Basic Authentication
-        response = await axios.post(
+        response = await api.post(
           endpoint,
           { username, password },
           {
@@ -71,25 +76,25 @@ const Login = ({ onLoginSuccess, mode }) => {
         );
         // Redirect to login on success
         console.log("Signup successful, redirecting to login");
-        navigate("/login", { replace: true });
+        navigate("/signin", { replace: true });
+        console.log("Username:", username);
+        console.log("Password:", password);
+        console.log("Response: ", response);
+        console.log("Response Data:", response.data);
       }
-      console.log("Username:", username);
-      console.log("Password:", password);
-      console.log("Response: ", response);
-      console.log("Response Data:", response.data);
     } catch (err) {
-      console.error(`${isLoginMode ? "Login" : "Sign up"} error:`, err);
+      console.error(`${isLoginMode ? "sign in" : "Sign up"} error:`, err);
       if (err.response) {
         setError(
           err.response.data?.message ||
-            `Invalid ${isLoginMode ? "login" : "sign up"} credentials`
+            `Invalid ${isLoginMode ? "sign in" : "sign up"} credentials`
         );
       } else if (err.request) {
         setError("Server is not responding. Please try again later.");
       } else {
         setError(
           err.message ||
-            `Failed to ${isLoginMode ? "log in" : "sign up"}. Please try again.`
+            `Failed to ${isLoginMode ? "sign in" : "sign up"}. Please try again.`
         );
       }
     }
@@ -123,7 +128,7 @@ const Login = ({ onLoginSuccess, mode }) => {
           </>
         ) : (
           <>
-            Already have an account? <Link to="/login">login</Link>
+            Already have an account? <Link to="/signin">Sign in</Link>
           </>
         )}
       </p>
@@ -133,11 +138,11 @@ const Login = ({ onLoginSuccess, mode }) => {
 
 Login.propTypes = {
   onLoginSuccess: PropTypes.func.isRequired,
-  mode: PropTypes.oneOf(["login", "sign up"]).isRequired,
+  mode: PropTypes.oneOf(["sign in", "sign up"]).isRequired,
 };
 
 Login.defaultProps = {
-  mode: "login",
+  mode: "sign in",
 };
 
 export default Login;

@@ -8,6 +8,7 @@ const Header = (props) => {
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to log out?")) {
     localStorage.removeItem("authToken");
+    localStorage.removeItem("refreshToken");
     props.onLogout();
     navigate("/login");
     }
